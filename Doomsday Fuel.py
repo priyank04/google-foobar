@@ -107,18 +107,30 @@ def getMatrixInverse(m):
             cofactors[r][c] = cofactors[r][c]/determinant
     return cofactors
 
-def subtractMatrix(m1,m2):
+def multiplyMatrices(m1,m2):
+    result = generate2DList(len(m1),len(m2[0]))
+    for i in range(len(m1)):  
+        for j in range(len(m2[0])):  
+            for k in range(len(m2)):  
+                result[i][j] += m1[i][k] * m2[k][j]  
+    return result
+    
+
+def subtractMatrices(m1,m2):
     diff = []
     for row in range(len(m1)):
         diff.append(list(map(operator.sub, m1[row], m2[row])))
     return diff
 
-
-def generateIdentityMatrix(dim):
+def generate2DList(rows,cols):
     a = []
-    for row in range(dim):
-        a += [[0] * dim]
-    for cell in range(dim):
+    for row in range(rows):
+        a += [[0] * cols]
+    return a
+
+def generateIdentityMatrix(rows,cols):
+    a = generate2DList(rows,cols)
+    for cell in range(rows):
         a[cell][cell] = 1
     return a
 
@@ -160,17 +172,20 @@ def solution(m):
     print(submatrix_Q)
     
     # 3) generare Identity matrix
-    iden_matrix = generateIdentityMatrix(len(submatrix_Q))
+    iden_matrix = generateIdentityMatrix(len(submatrix_Q),len(submatrix_Q))
     print(iden_matrix)
 
     # 4) Calculate I - Q
-    diff_iq = subtractMatrix(iden_matrix,submatrix_Q)
+    diff_iq = subtractMatrices(iden_matrix,submatrix_Q)
     print(diff_iq)
 
     # 5) find F = inverse(I-Q)
     submatrix_F = getMatrixInverse(diff_iq)
     print(submatrix_F)
 
+    # 6) Multiply F and R
+    product_FR = multiplyMatrices(submatrix_F,submatrix_R)
+    print(product_FR)
 
 
 
