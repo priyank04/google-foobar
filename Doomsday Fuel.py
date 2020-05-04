@@ -71,17 +71,58 @@ Use verify [file] to test your solution and see how it does. When you are finish
 
 import unittest
 from fractions import Fraction as frac
+import operator
 
-def gen_identity_matrix(rows,cols):
+def transposeMatrix(m):
+    return map(list,zip(*m))
+
+def getMatrixMinor(m,i,j):
+    return [row[:j] + row[j+1:] for row in (m[:i]+m[i+1:])]
+
+def getMatrixDeternminant(m):
+    if len(m) == 2:
+        return m[0][0]*m[1][1]-m[0][1]*m[1][0]
+
+    determinant = 0
+    for c in range(len(m)):
+        determinant += ((-1)**c)*m[0][c]*getMatrixDeternminant(getMatrixMinor(m,0,c))
+    return determinant
+
+def getMatrixInverse(m):
+    determinant = getMatrixDeternminant(m)
+    if len(m) == 2:
+        return [[m[1][1]/determinant, -1*m[0][1]/determinant],
+                [-1*m[1][0]/determinant, m[0][0]/determinant]]
+
+    cofactors = []
+    for r in range(len(m)):
+        cofactorRow = []
+        for c in range(len(m)):
+            minor = getMatrixMinor(m,r,c)
+            cofactorRow.append(((-1)**(r+c)) * getMatrixDeternminant(minor))
+        cofactors.append(cofactorRow)
+    cofactors = transposeMatrix(cofactors)
+    for r in range(len(cofactors)):
+        for c in range(len(cofactors)):
+            cofactors[r][c] = cofactors[r][c]/determinant
+    return cofactors
+
+def subtractMatrix(m1,m2):
+    diff = []
+    for row in range(len(m1)):
+        diff.append(list(map(operator.sub, m1[row], m2[row])))
+    return diff
+
+
+def generateIdentityMatrix(dim):
     a = []
-    for row in range(rows):
-        a += [[0] * cols]
-    for cell in range(rows):
+    for row in range(dim):
+        a += [[0] * dim]
+    for cell in range(dim):
         a[cell][cell] = 1
     return a
 
-
-def submatrix(m,row,col):
+def getSubmatrix(m,row,col):
     new_m = []
 
     for i in row:
@@ -98,7 +139,7 @@ def transform_matrix(m):
             m[i][i] = 1
         else:
             for j, col in enumerate(row):
-                m[i][j] = frac(col,row_sum)
+                m[i][j] = frac(col,row_sum)               
                 
 def solution(m):
     terminal_states, non_terminal_states = [[],[]]
@@ -114,20 +155,39 @@ def solution(m):
     transform_matrix(m)
 
     # 2) Get R and Q
-    submatrix_Q = submatrix(m,non_terminal_states,non_terminal_states)
-    submatrix_R = submatrix(m,non_terminal_states,terminal_states)
+    submatrix_Q = getSubmatrix(m,non_terminal_states,non_terminal_states)
+    submatrix_R = getSubmatrix(m,non_terminal_states,terminal_states)
+    print(submatrix_Q)
     
     # 3) generare Identity matrix
-    iden_matrix = gen_identity_matrix(len(submatrix_Q),len(submatrix_Q))
+    iden_matrix = generateIdentityMatrix(len(submatrix_Q))
+    print(iden_matrix)
+
+    # 4) Calculate I - Q
+    diff_iq = subtractMatrix(iden_matrix,submatrix_Q)
+    print(diff_iq)
+
+    # 5) find F = inverse(I-Q)
+    submatrix_F = getMatrixInverse(diff_iq)
+    print(submatrix_F)
 
 
 
-test_input = [
+
+
+test_input1 = [
             [0, 2, 1, 0, 0],
             [0, 0, 0, 3, 4],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0]
         ]
-
-solution(test_input)
+test_input2 = [
+            [0, 2, 1, 0, 0],
+            [1, 0, 0, 3, 4],
+            [0, 0, 4, 2, 0],
+            [0, 2, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ]        
+         
+solution(test_input1)
