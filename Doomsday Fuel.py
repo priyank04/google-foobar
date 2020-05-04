@@ -71,7 +71,31 @@ Use verify [file] to test your solution and see how it does. When you are finish
 
 import unittest
 from fractions import Fraction as frac
+from math import gcd
 import operator
+from functools import reduce
+
+def lcmFunc(denominators):
+    return reduce(lambda a,b: a*b // gcd(a,b), denominators)
+
+def unlikeToLikeFractions(list):
+    denominators = []
+    for fraction in list:
+        denominators.append(fraction.denominator)
+    lcm = lcmFunc(denominators)
+    result = []
+    for fraction in list:
+        result.append(int(fraction*lcm))
+    result.append(lcm)
+    return result
+
+def multiplyMatrices(m1,m2):
+    result = generate2DList(len(m1),len(m2[0]))
+    for i in range(len(m1)):  
+        for j in range(len(m2[0])):  
+            for k in range(len(m2)):  
+                result[i][j] += m1[i][k] * m2[k][j]  
+    return result
 
 def transposeMatrix(m):
     return map(list,zip(*m))
@@ -106,15 +130,6 @@ def getMatrixInverse(m):
         for c in range(len(cofactors)):
             cofactors[r][c] = cofactors[r][c]/determinant
     return cofactors
-
-def multiplyMatrices(m1,m2):
-    result = generate2DList(len(m1),len(m2[0]))
-    for i in range(len(m1)):  
-        for j in range(len(m2[0])):  
-            for k in range(len(m2)):  
-                result[i][j] += m1[i][k] * m2[k][j]  
-    return result
-    
 
 def subtractMatrices(m1,m2):
     diff = []
@@ -169,26 +184,23 @@ def solution(m):
     # 2) Get R and Q
     submatrix_Q = getSubmatrix(m,non_terminal_states,non_terminal_states)
     submatrix_R = getSubmatrix(m,non_terminal_states,terminal_states)
-    print(submatrix_Q)
     
     # 3) generare Identity matrix
     iden_matrix = generateIdentityMatrix(len(submatrix_Q),len(submatrix_Q))
-    print(iden_matrix)
 
     # 4) Calculate I - Q
     diff_iq = subtractMatrices(iden_matrix,submatrix_Q)
-    print(diff_iq)
 
     # 5) find F = inverse(I-Q)
-    submatrix_F = getMatrixInverse(diff_iq)
-    print(submatrix_F)
+    submatrix_F = getMatrixInverse(diff_iq)    
 
     # 6) Multiply F and R
     product_FR = multiplyMatrices(submatrix_F,submatrix_R)
-    print(product_FR)
 
+    # 7) Final calc
+    finalResult = unlikeToLikeFractions(product_FR[0])
 
-
+    return finalResult
 
 test_input1 = [
             [0, 2, 1, 0, 0],
@@ -198,11 +210,12 @@ test_input1 = [
             [0, 0, 0, 0, 0]
         ]
 test_input2 = [
-            [0, 2, 1, 0, 0],
-            [1, 0, 0, 3, 4],
-            [0, 0, 4, 2, 0],
-            [0, 2, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 1, 0, 0, 0, 1],
+            [4, 0, 0, 3, 2, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0]
         ]        
          
-solution(test_input1)
+print(solution(test_input2))
