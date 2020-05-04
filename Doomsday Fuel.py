@@ -72,6 +72,15 @@ Use verify [file] to test your solution and see how it does. When you are finish
 import unittest
 from fractions import Fraction as frac
 
+def gen_identity_matrix(rows,cols):
+    a = []
+    for row in range(rows):
+        a += [[0] * cols]
+    for cell in range(rows):
+        a[cell][cell] = 1
+    return a
+
+
 def submatrix(m,row,col):
     new_m = []
 
@@ -108,11 +117,10 @@ def solution(m):
     submatrix_Q = submatrix(m,non_terminal_states,non_terminal_states)
     submatrix_R = submatrix(m,non_terminal_states,terminal_states)
     
-    print(submatrix_Q)
-    print(submatrix_R)
-    
+    # 3) generare Identity matrix
+    iden_matrix = gen_identity_matrix(len(submatrix_Q),len(submatrix_Q))
 
-    
+
 
 test_input = [
             [0, 2, 1, 0, 0],
