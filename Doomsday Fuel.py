@@ -69,9 +69,8 @@ Use verify [file] to test your solution and see how it does. When you are finish
 
 '''
 
-import unittest
 from fractions import Fraction as frac
-from math import gcd
+from fractions import gcd
 import operator
 from functools import reduce
 
@@ -176,6 +175,8 @@ def solution(m):
         else:
             non_terminal_states.append(index)
     
+    if len(terminal_states) == 1:
+        return [1, 1]
     # 1) Transforming matrix
         # Stored value in fractions for NON-TERMINAL STATES
         # Set value 1 for TERMINAL STATES
@@ -216,6 +217,7 @@ test_input2 = [
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0]
-        ]        
+        ]
+test_input3 = [[0, 1, 0, 0, 0, 1], [4, 0, 0, 3, 2, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
          
-print(solution(test_input2))
+print(solution(test_input3))
