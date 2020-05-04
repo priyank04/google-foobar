@@ -52,3 +52,11 @@ Output:
 
 Use verify [file] to test your solution and see how it does. When you are finished editing your code, use submit [file] to submit your answer. If your solution passes the test cases, it will be removed from your home folder.
 '''
+def solution(x, y):
+    if x==y==0:
+        return 1
+    else:
+        return str(int(y + ((y-1)*(y-2))/2 + (x-1)*(y+1)  + (x-1)*(x-2)/2))
+
+print(solution(3,2))
+
